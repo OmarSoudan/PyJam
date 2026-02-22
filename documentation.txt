@@ -1,0 +1,96 @@
+# 📚 PyJam API Documentation
+
+**Version:** 1.0.0
+
+**Author:** OmarSoudan
+
+PyJam is built on a modular, object-oriented architecture. The library is divided into three main modules: **Instruments**, **Effects**, and the **AudioEngine**.
+
+---
+
+## 🎹 1. Core Instruments (`pyjam.instruments`)
+
+Every instrument in PyJam inherits from the base `Instrument` class.
+
+### `Instrument.play(note_str, duration)`
+
+Plays a single note using Scientific Pitch Notation.
+
+* **`note_str`** *(str)*: The note name and octave (e.g., `"C4"`, `"G#5"`, `"Bb2"`).
+* **`duration`** *(float)*: Length in seconds.
+
+### `Instrument.play_chord(chord_str, duration)`
+
+Plays a polyphonic chord.
+
+* **`chord_str`** *(str)*: The root and type (e.g., `"Am7"`, `"Cmaj7"`, `"Gsus4"`).
+* **`duration`** *(float)*: Length in seconds.
+
+### `Instrument.arpeggiate(chord_str, duration, pattern)`
+
+Cycles through the notes of a chord individually.
+
+* **`pattern`** *(list)*: A list of indices (e.g., `[0, 1, 2, 1]`) representing which note of the chord to play in sequence.
+
+---
+
+## 🎛️ 2. Virtual Pedalboard (`pyjam.effects`)
+
+Effects are applied to instruments using a method-chaining pattern.
+
+| Class | Parameters | Description |
+| --- | --- | --- |
+| `Distortion` | `drive=3.0` | Soft-clipping saturation that adds "grit" to the signal. |
+| `Delay` | `feedback=0.3, time=0.2` | Creates a rhythmic echo effect. |
+| `Wah` | `sweep_rate=2.0` | A resonant bandpass filter that modulates frequency. |
+| `Chorus` | `rate=1.5, depth=0.002` | Thickens sound by detuning and doubling the signal. |
+| `Tremolo` | `rate=5.0, depth=0.5` | Modulates the amplitude (volume) of the sound. |
+
+---
+
+## ⚙️ 3. The Engine (`pyjam.engine`)
+
+The `AudioEngine` is a static utility class that handles the mathematical heavy lifting.
+
+### `AudioEngine.get_freq(note_str)`
+
+The heart of the pitch system. It converts strings like `"A4"` to `440.0`. It supports octaves 0 through 8.
+
+### `AudioEngine.normalize(signal, volume=0.8)`
+
+Calculates the peak amplitude of a signal and scales it to ensure no digital clipping occurs while maintaining the target volume.
+
+### `AudioEngine.save(signal, filename)`
+
+A wrapper for `scipy` and `pydub`. It automatically converts the float array to 16-bit PCM for WAV and exports to MP3.
+
+---
+
+## 🛠️ 4. Extending the Library
+
+One of PyJam's strongest features is its extensibility. To create a new instrument, simply define the `play_raw` method:
+
+```python
+from pyjam.instruments import Instrument
+import numpy as np
+
+class MyInstrument(Instrument):
+    def play_raw(self, freq, duration):
+        t = np.linspace(0, duration, int(44100 * duration), False)
+        # Define your unique sound math here
+        return np.sin(2 * np.pi * freq * t)
+
+```
+
+---
+
+## 📝 5. Note Convention Table
+
+| Input | Result |
+| --- | --- |
+| `"C"` | C in Octave 4 (Default) |
+| `"C5"` | C in Octave 5 |
+| `"F#2"` | F Sharp in Octave 2 |
+| `"Ab3"` | A Flat in Octave 3 |
+
+---
