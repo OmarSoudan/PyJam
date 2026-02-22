@@ -87,7 +87,8 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
 
-**Created by** [OmarSoudan](https://www.google.com/search?q=https://github.com/OmarSoudan)   🚀
+**Created by** [OmarSoudan](https://github.com/OmarSoudan)   🚀
 
 ---
+
 
