@@ -1,94 +1,112 @@
-
 # PyJam 🎸🎹
 
-**PyJam** is a lightweight, Object-Oriented Digital Audio Workstation (DAW) for Python. It allows developers and musicians to generate complex musical arrangements, synthesis, and pedalboard effects entirely through code.
+PyJam is a lightweight, object-oriented Digital Audio Workstation (DAW) for Python. It provides a compact API for generating musical arrangements, synthesizing instruments, and building virtual pedalboards—aimed at developers, sound designers, and musicians who want programmatic control over audio production.
 
-Whether you want to build a procedural backing track for a game, experiment with physical modeling synthesis, or create a virtual pedalboard for your guitar, PyJam provides the tools to do it.
+Key design goals:
+- Easy-to-use, Pythonic API for instruments and effects
+- Modular pedalboard architecture for chaining audio effects
+- High-fidelity WAV export with optional MP3 support
+- Extensible: add new instruments or effects by subclassing base classes
+
+---
 
 ## 🚀 Features
 
-* **10+ Built-in Instruments:** From Physical Modeling (Acoustic Guitar, Flute) to FM Synthesis (Bells) and Subtractive Synthesis (Synths, Strings).
-* **Virtual Pedalboard:** Chain effects like Distortion, Delay, Wah, and Chorus using a modular API.
-* **Music Theory Engine:** Intelligent chord parsing (e.g., `Am7`, `C#maj7`, `Gsus4`) and automatic frequency calculation across octaves (e.g., `C4`, `A5`).
-* **Format Agnostic:** High-fidelity WAV export and web-friendly MP3 support out of the box.
+- 10+ built-in instruments (physical-modeling, FM, subtractive)
+- Modular pedalboard with distortion, delay, chorus, wah, tremolo, etc.
+- Music-theory utilities for chord parsing and octave mapping (e.g. `Am7`, `C#maj7`, `C4`)
+- Export to WAV (high quality) and MP3 (requires `ffmpeg`)
+- Designed for programmatic composition and quick prototyping
+
+---
 
 ## 📦 Installation
 
-1. **Clone the repository:**
+1. Clone the repository:
+
 ```bash
 git clone https://github.com/OmarSoudan/PyJam.git
 cd PyJam
-
 ```
 
+2. Install Python dependencies:
 
-2. **Install dependencies:**
 ```bash
 pip install -r requirements.txt
-
 ```
 
+Note: To export MP3 files, ensure `ffmpeg` is installed on your system.
 
-*Note: To export MP3 files, ensure you have `ffmpeg` installed on your system.*
+---
 
 ## 🎸 Quick Start
+
+Example usage demonstrating instrument creation, pedalboard chaining, and saving audio:
 
 ```python
 from pyjam import ElectricGuitar, Distortion, Delay, AudioEngine
 
-# 1. Initialize your instrument
+# Initialize an instrument
 guitar = ElectricGuitar(volume=0.5)
 
-# 2. Build your pedalboard
+# Build a pedalboard
 guitar.add_effect(Distortion(drive=4.0)).add_effect(Delay(time=0.2))
 
-# 3. Play a riff or a chord
+# Create a riff or chord progression
 riff = guitar.arpeggiate("Am7", duration=2.0, pattern=[0, 2, 1, 3])
 
-# 4. Save your jam
-AudioEngine.save(riff, "my_first_riff")
-
+# Export the audio
+AudioEngine.save(riff, "my_first_riff.wav")
 ```
 
-## 🎻 Instruments Available
+---
 
-| Category | Instruments | Synthesis Method |
-| --- | --- | --- |
-| **Acoustic** | Piano, AcousticGuitar, Flute, Strings | Physical Modeling / Additive |
-| **Electric** | ElectricGuitar, Bass, Organ | Harmonic Summation |
-| **Brass** | Trumpet, Saxophone | Resonant Waves |
-| **Digital** | SynthPad, SubBass, Retro8Bit, Bell | FM / Subtractive / PWM |
+## 🎻 Available Instruments
+
+- Acoustic: Piano, AcousticGuitar, Flute, Strings (physical modeling / additive)
+- Electric: ElectricGuitar, Bass, Organ (harmonic summation)
+- Brass: Trumpet, Saxophone (resonant wave models)
+- Digital: SynthPad, SubBass, Retro8Bit, Bell (FM / subtractive / PWM)
+
+If you add a new instrument, inherit from the `Instrument` base class and implement `play_raw`.
+
+---
 
 ## 🎛️ Effects (Pedalboard)
 
-Chain these to any instrument using `.add_effect()`:
+Common effects you can chain using `.add_effect()`:
 
-* `Distortion(drive)`: Soft-clipping saturation.
-* `Delay(feedback, time)`: Tempo-synced echo.
-* `Wah(sweep_rate)`: Resonant auto-wah filter.
-* `Chorus(rate, depth)`: Thick ensemble modulation.
-* `Tremolo(rate, depth)`: Classic volume pulsing.
+- Distortion(drive): soft-clipping saturation
+- Delay(feedback, time): tempo-aligned echo
+- Wah(sweep_rate): resonant auto-wah filter
+- Chorus(rate, depth): ensemble modulation
+- Tremolo(rate, depth): amplitude modulation
 
-## 🛠️ Development & Contribution
+---
 
-PyJam is built using **Object-Oriented Programming (OOP)**. To add a new instrument, simply inherit from the `Instrument` base class and define your `play_raw` logic:
+## 🛠 Development
+
+To add a custom instrument, subclass the `Instrument` base class and implement the audio generation logic:
 
 ```python
 class MyCustomSynth(Instrument):
-    def play_raw(self, freq, duration):
-        # Your custom math here
+    def play_raw(self, freq, duration, sr=44100):
+        t = np.linspace(0, duration, int(sr * duration), endpoint=False)
         return np.sin(2 * np.pi * freq * t)
-
 ```
 
-## 📝 License
-
-Distributed under the MIT License. See `LICENSE` for more information.
+Please include tests and a short benchmark or example when contributing new instruments or effects.
 
 ---
 
-**Created by** [OmarSoudan](https://github.com/OmarSoudan)   🚀
+## Contributing
+
+Contributions are welcome. Open issues for bugs or feature requests and submit PRs for additions. Follow the existing code style and include documentation and examples for new features.
 
 ---
 
+## License & Author
 
+PyJam is distributed under the MIT License. See `LICENSE` for details.
+
+Created by [OmarSoudan](https://github.com/OmarSoudan)
